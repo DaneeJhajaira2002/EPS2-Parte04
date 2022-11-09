@@ -17,7 +17,10 @@ tabla_producto = """CREATE TABLE Producto(
 
 
 listar_productos = """SELECT * FROM PRODUCTO"""
+mostrar_producto = """SELECT * FROM Producto where idproducto = ?"""
 registrar_producto = """INSERT INTO Producto(codigo,nombre,precio) VALUES (?,?,?)"""
+editar_producto = """UPDATE Producto SET codigo=?, nombre=?, precio=? WHERE idproducto=?"""
+eliminar_producto = """DELETE FROM Producto WHERE idproducto = ?"""
 
 cursor = conexion.cursor()
 def agregar_espacio(cadena):
@@ -50,7 +53,28 @@ if(opcion=="1"):
     producto = (codigo,nombre,precio)
     cursor.execute(registrar_producto, producto)
     conexion.commit()
-    
+elif(opcion=="2"):
+    idproducto = input("Id del producto: ")
+    id = int(idproducto)
+    cursor.execute(eliminar_producto, (id,))
+    conexion.commit()
+    print ("\n*** PRODUCTO ELIMINADO CORRECTAMENTE ***")
+elif(opcion=="3"):
+    idproducto = input("Id del producto: ")
+    id = int(idproducto)
+    print("*\nDatos actuales del producto***\n")
+    cursor.execute(mostrar_producto, (id,))
+    producto = cursor.fetchone()
+    print("Codigo: " + str(producto[1]))
+    print("Nombre: " + producto[2])
+    print("Precio: " + str(producto[3]))
+    print("\nIngrese los nuevos valores: ")
+    codigo = input("Codigo: ")
+    nombre = input("Nombre: ")
+    precio = input("Precio: ")
+    cursor.execute(editar_producto, (codigo, nombre, precio, id,))
+    conexion.commit()
+    print("\n*** PRODUCTO EDITADO EXITOSAMENTE *** ")
 elif(opcion=="4"):
     cursor.execute(listar_productos)
     productos = cursor.fetchall()
